@@ -25,43 +25,15 @@ def file_name(file_dir):
 if __name__ == "__main__":
     
     AllData=pd.read_csv("./date/real/AllData.csv",encoding='GBK')
-    custmer=AllData[u"id"].value_counts().index.tolist())
+    a=AllData.iloc[3:5,:]
+    custmer=AllData[u"客户编码"].value_counts().index.tolist()
     for i in custmer:
-        temp=AllData[AllData[u"id"]==i]
-        temp.to_csv("/date/real/person/"+str(i)+".csv",encoding='GBK',index=False)
-        break
+        print(i)
+        temp=AllData[AllData[u"客户编码"]==i]
+        temp.to_csv("./date/real/person/"+str(i)+".csv",encoding='GBK',index=False)
+#        break
         pass
         
-#    rootfile="./real"
-#    Paths,dirs,AllFile = file_name(rootfile)
-#    
-#    #对目录进行拼接
-#    AllFile = [rootfile+'/'+x for x in AllFile]
-#    print("=====")
-#    #文件名升序排列
-#    AllFile=sorted(AllFile)
-#    AllData=pd.DataFrame()
-#    for i in AllFile:
-#        temp=pd.read_csv(i)
-#        del temp[u"营销部名称"]
-#        del temp[u"客户名称"]
-#        del temp[u"客户经理"]
-#        del temp[u"经营业态"]
-#        del temp[u"结算方式"]
-#        AllData = pd.concat([AllData,temp])
-##        break
-#        pass
-#    date=sorted(AllData[u"日期"].value_counts().index.tolist())
-#    DaySum=pd.DataFrame()
-#    for i in date:
-#        temp=AllData[AllData[u"日期"]==i]
-#        temp=pd.DataFrame(temp.iloc[:,4:].sum()).T
-#        DaySum=pd.concat([DaySum,temp])
-##        break
-#        pass
-#    DaySum.insert(0,u"日期",date)
-#    DaySum.to_csv("./date/real/realDaySum.csv",encoding='GBK',index=False)
-#    AllData.to_csv("./date/real/AllData.csv",encoding='GBK',index=False)
     pass
     
     
