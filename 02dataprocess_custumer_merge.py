@@ -25,23 +25,23 @@ def file_name(file_dir):
 
 if __name__ == "__main__":
     
-#    AllDataPlan=pd.read_csv("./date/plan/AllData.csv",encoding='GBK')
-#    AllDataReal=pd.read_csv("./date/real/AllData.csv",encoding='GBK')
-#    
-#    #重命名
-#    nametemp=AllDataPlan.columns.tolist()
-#    nametemp[4:]=[i+"_plan" for i in nametemp[4:]]
-#    AllDataPlan.columns=nametemp
-#    
-#    nametemp=AllDataReal.columns.tolist()
-#    nametemp[4:]=[i+"_real" for i in nametemp[4:]]
-#    AllDataReal.columns=nametemp
-#    
-#    
-#    a=AllDataPlan.iloc[3:5,:]
-#    
-#    #检测过两边都重合
-#    custmer=AllDataPlan[u"客户编码"].value_counts().index.tolist()
+    AllDataPlan=pd.read_csv("./date/plan/AllData.csv",encoding='GBK')
+    AllDataReal=pd.read_csv("./date/real/AllData.csv",encoding='GBK')
+    
+    #重命名
+    nametemp=AllDataPlan.columns.tolist()
+    nametemp[4:]=[i+"_plan" for i in nametemp[4:]]
+    AllDataPlan.columns=nametemp
+    
+    nametemp=AllDataReal.columns.tolist()
+    nametemp[4:]=[i+"_real" for i in nametemp[4:]]
+    AllDataReal.columns=nametemp
+    
+    
+    a=AllDataPlan.iloc[3:5,:]
+    
+    #检测过两边都重合
+    custmer=AllDataPlan[u"客户编码"].value_counts().index.tolist()
     #起始时间
     start = time()
     cc=[]
