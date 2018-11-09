@@ -25,8 +25,8 @@ def file_name(file_dir):
 
 if __name__ == "__main__":
     
-    AllDataPlan=pd.read_csv("./date/plan/AllData.csv",encoding='GBK')
-    AllDataReal=pd.read_csv("./date/real/AllData.csv",encoding='GBK')
+    AllDataPlan=pd.read_csv("./dataprocess_dataExtract/planData.csv",encoding='GBK')
+    AllDataReal=pd.read_csv("./dataprocess_dataExtract/realData.csv",encoding='GBK')
     
     #重命名
     nametemp=AllDataPlan.columns.tolist()
@@ -57,10 +57,24 @@ if __name__ == "__main__":
                 on=[u"日期",u"客户编码"],how='left')
     print("took %.2f seconds for" % ((time() - start)))
     
+    del Datatemp["档位_y"]
+    del Datatemp["订货周期_y"]
+    
+    
+    nametemp=[i.split('_')[0] for i in nametemp]
+    cc=[]
+    for i in nametemp[4:]:
+        cc.append(i+"_real")
+        cc.append(i+"_plan")
+        pass
+    nametemp=nametemp[:4]+cc
+    nametemp[2]=nametemp[2]+"_x"
+    nametemp[3]=nametemp[3]+"_x"
+    final=Datatemp[nametemp]
     
     listd=pd.DataFrame([custmer,cc]).T
-    listd.to_csv("./date/list.csv",encoding='GBK',index=False)
-    Datatemp.to_csv("./date/merge.csv",encoding='GBK',index=False)
+    listd.to_csv("./02dataprocess_custumer_merge/list.csv",encoding='GBK',index=False)
+    final.to_csv("./02dataprocess_custumer_merge/merge.csv",encoding='GBK',index=False)
         
     pass
     
