@@ -38,8 +38,6 @@ if __name__ == "__main__":
     AllDataReal.columns=nametemp
     
     
-    a=AllDataPlan.iloc[3:5,:]
-    
     #检测过两边都重合
     custmer=AllDataPlan[u"客户编码"].value_counts().index.tolist()
     #起始时间
@@ -50,7 +48,7 @@ if __name__ == "__main__":
         cc.append(len(AllDataReal[AllDataReal[u"客户编码"]==i]))
         pass
     print("took %.2f seconds for" % ((time() - start)))
-    
+    listd=pd.DataFrame([custmer,cc]).T
     
     start = time()
     Datatemp=pd.merge(AllDataReal,AllDataPlan,
@@ -67,14 +65,29 @@ if __name__ == "__main__":
         cc.append(i+"_real")
         cc.append(i+"_plan")
         pass
+    #自动生成实际和预期一一对应的顺序
     nametemp=nametemp[:4]+cc
-    nametemp[2]=nametemp[2]+"_x"
-    nametemp[3]=nametemp[3]+"_x"
+    
+    cc=Datatemp.columns.tolist()
+    cc[2]=cc[2].split("_")[0]
+    cc[3]=cc[3].split("_")[0]
+    Datatemp.columns=cc
     final=Datatemp[nametemp]
     
-    listd=pd.DataFrame([custmer,cc]).T
-    listd.to_csv("./02dataprocess_custumer_merge/list.csv",encoding='GBK',index=False)
-    final.to_csv("./02dataprocess_custumer_merge/merge.csv",encoding='GBK',index=False)
+#    #
+#    nametemp=AllDataPlan.columns.tolist()
+#    nametemp=[i.split('_')[0] for i in nametemp]
+#    
+##    def f(x):
+##        return x
+##    
+##    for i in nametemp[4:]:
+###        tempname=final.apply(f(x[i]))
+##        break
+##        pass
+#
+##    listd.to_csv("./02dataprocess_custumer_merge/list.csv",encoding='GBK',index=False)
+##    final.to_csv("./02dataprocess_custumer_merge/merge.csv",encoding='GBK',index=False)
         
     pass
     
