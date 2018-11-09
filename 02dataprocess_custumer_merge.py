@@ -59,8 +59,8 @@ if __name__ == "__main__":
     
     
     listd=pd.DataFrame([custmer,cc]).T
-    listd.to_csv("list.csv",encoding='GBK',index=False)
-    Datatemp.to_csv("merge.csv",encoding='GBK',index=False)
+    listd.to_csv("./date/list.csv",encoding='GBK',index=False)
+    Datatemp.to_csv("./date/merge.csv",encoding='GBK',index=False)
         
     pass
     
