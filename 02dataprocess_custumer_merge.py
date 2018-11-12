@@ -280,6 +280,14 @@ if __name__ == "__main__":
     finaltemp=pd.concat([i for i in datatemp])
     print("took %.2f seconds for" % ((time() - start))) 
     
+    del finaltemp[u"档位"]
+    del finaltemp[u"订货周期"]
+    
+    #个人数据
+    start = time()
+    aa=pd.merge(Datatemp,finaltemp,
+                on=[u"日期",u"客户编码"],how='left')
+    print("took %.2f seconds for" % ((time() - start)))
     pass
     
     
