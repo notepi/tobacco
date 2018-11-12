@@ -36,7 +36,6 @@ if __name__ == "__main__":
     AllDataReal.columns=nametemp
 
     
-    #检测过两边都重合
     #对客户购买次数做统计
     #起始时间
     start = time()
@@ -46,24 +45,28 @@ if __name__ == "__main__":
     print("took %.2f seconds for" % ((time() - start)))
     
     #将客户的购买和标准进行合并
+    #统计后，每行数据包括用户针对每种烟的真实购买记录和公司定额计划
     start = time()
     Datatemp=pd.merge(AllDataReal,AllDataPlan,
                 on=[u"日期",u"客户编码"],how='left')
     print("took %.2f seconds for" % ((time() - start)))
     
+    #因为两边的都有 档位和购货周期的列，所以合并后会有重复，需要删除
     #删除合并后重复的字段
     del Datatemp["档位_y"]
     del Datatemp["订货周期_y"]
     
     #获取原始的名称
     nametemp=[i.split('_')[0] for i in nametemp]
+    
+    #增加购买比例的特征
+    #如果公司的定额计划是0，则此项标-1
     #起始时间
     start = time()  
     for i in nametemp[4:]:
-#        print(i)
         Datatemp[i+"_percent"]=Datatemp[i+'_real']/Datatemp[i+'_plan']
         pass
-#    Datatemp[np.isinf(Datatemp)]=-1
+    #除以0的是nan，用-1替换nan
     Datatemp[np.isnan(Datatemp)]=-1
     print("took %.2f seconds for" % ((time() - start)))
     
@@ -81,12 +84,13 @@ if __name__ == "__main__":
     cc[2]=cc[2].split("_")[0]
     cc[3]=cc[3].split("_")[0]
     Datatemp.columns=cc
-    final=Datatemp[templist]    
+    Datatemp=Datatemp[templist]    
     
 
-    
+    #每种在地区的每日销售都有记录
     saledata=pd.read_csv("./date/real/realDaySum.csv",encoding='GBK')
     adddate=pd.DataFrame()
+    #
     adddate[u"日期"]=saledata[u"日期"][20:].tolist()  
     temp=pd.DataFrame()
     for i in nametemp[4:]:
@@ -110,27 +114,27 @@ if __name__ == "__main__":
         
     #与整体的销售数据合并
     start = time()
-    Datatemp=pd.merge(final,adddate,
+    Datatemp=pd.merge(Datatemp,adddate,
                 on=[u"日期"],how='left')
     print("took %.2f seconds for" % ((time() - start)))
     
-#    #自动生成实际和预期一一对应的顺序
-#    cc=[]
-#    for i in nametemp[4:]:
-#        cc.append(i+"_real")
-#        cc.append(i+"_plan")
-#        cc.append(i+"_percent")
-#        cc.append(i+"_twenty2ten")
-#        cc.append(i+"_ten2yesterday")
-#        pass
-#    templist=nametemp[:4]+cc
-#    
-#    #合并后的有x后缀
-#    cc=Datatemp.columns.tolist()
-#    cc[2]=cc[2].split("_")[0]
-#    cc[3]=cc[3].split("_")[0]
-#    Datatemp.columns=cc
-#    final=Datatemp[templist]  
+    #自动生成实际和预期一一对应的顺序
+    cc=[]
+    for i in nametemp[4:]:
+        cc.append(i+"_real")
+        cc.append(i+"_plan")
+        cc.append(i+"_percent")
+        cc.append(i+"_twenty2ten")
+        cc.append(i+"_ten2yesterday")
+        pass
+    templist=nametemp[:4]+cc
+    
+    #合并后的有x后缀
+    cc=Datatemp.columns.tolist()
+    cc[2]=cc[2].split("_")[0]
+    cc[3]=cc[3].split("_")[0]
+    Datatemp.columns=cc
+    Datatemp=Datatemp[templist]  
     
 #    #写入数据
 #    start = time() 
@@ -248,6 +252,7 @@ if __name__ == "__main__":
         cc=[]
         for i in nametemp[4:]:
             cc.append(i+"_real")
+            cc.append(i+"_real")
             pass
         cc=nametemp[0:4]+cc
         #针对每一个品类
@@ -256,8 +261,9 @@ if __name__ == "__main__":
         c=dtemp.iloc[:,4:]
 
         for w in range(1,5):
-
+            #生成-1的头数据
             aa=pd.DataFrame(np.ones((w,c.shape[1]))*(-1),columns=cc[4:])
+            #添加-1的头数据，删除尾数据
             bb=pd.concat([aa,c]).iloc[:-w,:].reset_index(drop=True)
             namett=[i+"_"+str(w) for i in cc[4:]]
             bb.columns=namett
@@ -277,7 +283,9 @@ if __name__ == "__main__":
         print("took %.2f seconds for" % ((time() - start))) 
         
     start = time()        
-    finaltemp=pd.concat([i for i in datatemp])
+    #针对每个用户做完处理后合并
+    finaltemp=pd.concat(datatemp)
+    datatemp=0
     print("took %.2f seconds for" % ((time() - start))) 
     
     del finaltemp[u"档位"]
@@ -285,13 +293,28 @@ if __name__ == "__main__":
     
     #个人数据
     start = time()
-    aa=pd.merge(Datatemp,finaltemp,
+    final=pd.merge(Datatemp,finaltemp,
                 on=[u"日期",u"客户编码"],how='left')
+    Datatemp=0
+    finaltemp=0
     print("took %.2f seconds for" % ((time() - start)))
     
-    
+    #内存勉强够用
+    start = time()
     date=adddate[u"日期"]
-    temp=aa[[x in adddate[u"日期"] for x in aa[u"日期"]]]
+    final=final[[x in adddate[u"日期"].values for x in final[u"日期"]]]
+    print("took %.2f seconds for" % ((time() - start))) 
+    
+    name=final.columns.tolist()
+    namett=[]
+    for i in nametemp :
+        for j in name:
+            if j.split("_")[0]==i:
+                namett.append(j)
+#            break
+            pass
+#        break
+        pass
     pass
     
     
