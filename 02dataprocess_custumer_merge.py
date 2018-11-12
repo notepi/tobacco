@@ -118,23 +118,23 @@ if __name__ == "__main__":
                 on=[u"日期"],how='left')
     print("took %.2f seconds for" % ((time() - start)))
     
-    #自动生成实际和预期一一对应的顺序
-    cc=[]
-    for i in nametemp[4:]:
-        cc.append(i+"_real")
-        cc.append(i+"_plan")
-        cc.append(i+"_percent")
-        cc.append(i+"_twenty2ten")
-        cc.append(i+"_ten2yesterday")
-        pass
-    templist=nametemp[:4]+cc
-    
-    #合并后的有x后缀
-    cc=Datatemp.columns.tolist()
-    cc[2]=cc[2].split("_")[0]
-    cc[3]=cc[3].split("_")[0]
-    Datatemp.columns=cc
-    Datatemp=Datatemp[templist]  
+#    #自动生成实际和预期一一对应的顺序
+#    cc=[]
+#    for i in nametemp[4:]:
+#        cc.append(i+"_real")
+#        cc.append(i+"_plan")
+#        cc.append(i+"_percent")
+#        cc.append(i+"_twenty2ten")
+#        cc.append(i+"_ten2yesterday")
+#        pass
+#    templist=nametemp[:4]+cc
+#    
+#    #合并后的有x后缀
+#    cc=Datatemp.columns.tolist()
+#    cc[2]=cc[2].split("_")[0]
+#    cc[3]=cc[3].split("_")[0]
+#    Datatemp.columns=cc
+#    Datatemp=Datatemp[templist]  
     
 #    #写入数据
 #    start = time() 
@@ -252,7 +252,7 @@ if __name__ == "__main__":
         cc=[]
         for i in nametemp[4:]:
             cc.append(i+"_real")
-            cc.append(i+"_real")
+#            cc.append(i+"_real")
             pass
         cc=nametemp[0:4]+cc
         #针对每一个品类
