@@ -288,6 +288,10 @@ if __name__ == "__main__":
     aa=pd.merge(Datatemp,finaltemp,
                 on=[u"日期",u"客户编码"],how='left')
     print("took %.2f seconds for" % ((time() - start)))
+    
+    
+    date=adddate[u"日期"]
+    temp=aa[[x in adddate[u"日期"] for x in aa[u"日期"]]]
     pass
     
     
