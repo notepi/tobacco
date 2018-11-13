@@ -239,6 +239,63 @@ if __name__ == "__main__":
 #        break
 #        pass
 
+#加上percent  
+    #历边每一个ID
+    datatemp=[]
+    finaltemp=pd.DataFrame()
+    start = time()
+    j=0
+    for z in listd[u"ID"][:]:
+        j=j+1
+        print(j)
+        dtemp=Datatemp[Datatemp[u"客户编码"]==z].reset_index(drop=True)
+        cc=[]
+        for i in nametemp[4:]:
+            cc.append(i+"_percent")
+#            cc.append(i+"_real")
+            pass
+        cc=nametemp[0:4]+cc
+        #针对每一个品类
+        dtemp=dtemp[cc]
+        tempc=dtemp.iloc[:,:4]
+        c=dtemp.iloc[:,4:]
+
+        for w in range(1,5):
+            #生成-1的头数据
+            aa=pd.DataFrame(np.ones((w,c.shape[1]))*(-1),columns=cc[4:])
+            #添加-1的头数据，删除尾数据
+            bb=pd.concat([aa,c]).iloc[:-w,:].reset_index(drop=True)
+            namett=[i+"_"+str(w) for i in cc[4:]]
+            bb.columns=namett
+#            print(len(bb))
+#            print(w)
+            tempc=pd.concat([tempc,bb],axis=1)
+#            break
+            pass
+        datatemp.append(tempc)
+#        print(z)
+#        print(len(dtemp))
+#        print(len(tempc))
+#        finaltemp=pd.concat([finaltemp,tempc])
+   
+#        break
+        pass
+        print("took %.2f seconds for" % ((time() - start))) 
+        
+    start = time()        
+    #针对每个用户做完处理后合并
+    testemp=pd.concat(datatemp)
+    datatemp=0
+    print("took %.2f seconds for" % ((time() - start))) 
+    
+    del testemp[u"档位"]
+    del testemp[u"订货周期"]    
+   
+
+
+
+
+
 #最后代码    
     #历边每一个ID
     datatemp=[]
@@ -291,6 +348,9 @@ if __name__ == "__main__":
     del finaltemp[u"档位"]
     del finaltemp[u"订货周期"]
     
+    
+    
+    
     #个人数据
     start = time()
     final=pd.merge(Datatemp,finaltemp,
@@ -299,13 +359,64 @@ if __name__ == "__main__":
     finaltemp=0
     print("took %.2f seconds for" % ((time() - start)))
     
-    #内存勉强够用
+    #个人数据
     start = time()
-    date=adddate[u"日期"]
-    final=final[[x in adddate[u"日期"].values for x in final[u"日期"]]]
-    print("took %.2f seconds for" % ((time() - start))) 
+    finaltemp=pd.merge(final,testemp,
+                on=[u"日期",u"客户编码"],how='left')
+    testemp=0
+    final=0
+    print("took %.2f seconds for" % ((time() - start)))
     
-    name=final.columns.tolist()
+#    start = time()
+#    finaltemp.to_csv("tt.csv",encoding='GBK',index=False)
+#    print("took %.2f seconds for" % ((time() - start)))
+    
+#    #内存勉强够用
+#    start = time()
+#    lo=int(len(finaltemp)/2)
+#    t1=finaltemp.iloc[:lo,]
+#    t2=finaltemp.iloc[lo:,]
+#    finaltemp=0
+#    t1=t1[[x in adddate[u"日期"].values for x in t1[u"日期"]]]
+#    t2=t2[[x in adddate[u"日期"].values for x in t2[u"日期"]]]
+#    t1=pd.concat([t1,t2])
+#    print("took %.2f seconds for" % ((time() - start))) 
+    
+    start = time()
+    longtine=np.linspace(0,len(finaltemp),10)
+    longtine=longtine.astype(int)
+    add=[]
+    for i in range(9):
+        print(longtine[i])
+
+        add.append(finaltemp.iloc[longtine[i]:longtine[i+1],])
+        pass
+    AllDataPlan=0
+    AllDataReal=0
+    finaltemp=pd.DataFrame()
+    for i in range(len(add)):
+#        finaltemp=pd.concat([finaltemp,
+#                                add[i][[x in adddate[u"日期"].values for x in add[i][u"日期"]]]])
+#        add[i][[x in adddate[u"日期"].values for x in add[i][u"日期"]]]
+#        add[i]=0
+        print(i)
+        print(len(add[i]))
+        print("===========================================")
+        add[i]=add[i][[x in adddate[u"日期"].values for x in add[i][u"日期"]]]
+        print(len(add[i]))
+        print("+++++++++++++++++++++++++++++++++++++++++++")
+        pass
+         
+    print("took %.2f seconds for" % ((time() - start)))     
+    
+    for i in range(len(add)):
+        print(len(add[i]))
+        finaltemp=pd.concat([finaltemp,add[i]])
+        print(len(finaltemp))
+        add[i]=0
+#        break
+        pass
+    name=finaltemp.columns.tolist()
     namett=[]
     for i in nametemp :
         for j in name:
@@ -318,6 +429,9 @@ if __name__ == "__main__":
     pass
     
     
+    start = time()
+    finaltemp.to_csv("tt.csv",encoding='GBK',index=False)
+    print("took %.2f seconds for" % ((time() - start)))
     
     
     
