@@ -58,6 +58,10 @@ if __name__ == "__main__":
     newdate=newdate[newdate["退出时间"]==-1]
     newdatename=newdate[u'日期'].tolist()
     
+    finl=fulldatename+newdatename
+    
+    pd.DataFrame(finl).to_csv("classname.csv",encoding='GBK',index=False)
+    
 
     
     
