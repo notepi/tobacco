@@ -108,64 +108,6 @@ if __name__ == "__main__":
                      typename+"_percent_1"]
         todata=mydate[todataname]
 
-#       #成功，但是速度不如apply        
-#        def f(temp):
-#            result=0
-#            #进行逻辑
-#            # 当期的plan为0，返回-1
-#            if temp[typename+"_plan"].values[0]<=0:
-##                print("a")
-#                result=-1
-#                pass
-#            #档期的plan不为0
-#            else:
-#                #实际购买大于等于计划
-#                if temp[typename+"_real"].values[0] >= temp[typename+"_plan"].values[0]:
-#                    result=-2
-##                    print("b")
-#                    pass
-#                #实际购买小于计划
-#                else:
-#                    #上期的plan为0时，赋值为-1
-#                    #上期的占比为-1表明，上期的plan为-1
-#                    if temp[typename+"_percent_1"].values[0] <= -1:
-#                        result=-1
-##                        print("c")
-#                        pass
-#                    #上期的plan不为0
-#                    else:
-#                        #上期的real为0
-#                        if temp[typename+"_real_1"].values[0] <=0:
-#                            #本期实现0突破
-#                            if temp[typename+"_real"].values[0] >0:
-##                                print("d")
-#                                result=-2
-#                                pass
-#                            #本期没有实现0突破
-#                            else:
-#                                result=1
-##                                print("e")
-#                                pass#本期没有实现0突破
-#                            pass
-#                        #上月的real不为0
-#                        else:
-##                            print("f")
-#                            result=temp[typename+"_real"].values[0]/temp[typename+"_plan"].values[0]
-#                            pass#上月real不为0
-#                        pass#当期real不为0
-#                    pass#档期plan不为0
-##            print(result)
-#            return result
-#        resultcl=[]
-#        #每行数据
-#        start = time()
-#        for i in range(len(todata))[:]:
-#            temp=todata.iloc[i:i+1,:]
-#            resultcl.append(f(temp))
-##            break
-#            pass
-#        print("took %.2f seconds for" % ((time() - start)))
-        
 
         #对结果进行编码
         def c(temp):
@@ -241,13 +183,10 @@ if __name__ == "__main__":
         
         #提取数据
         delname=[typename+"_real",typename+"_percent",
-                 typename+"_plan",u"日期",u"客户编码"]
+                 typename+"_plan"]
         mydatename=list(set(mydatename).difference(set(delname)))
         mydate=mydate[mydatename]
-        #组成完整的数据
-        mydate['tag']=resultcl
-        #释放内存
-        resultcl=0
+
         
         #按种类记录特征的名称
         namett=[]
@@ -259,19 +198,28 @@ if __name__ == "__main__":
                 pass
     #        break
             pass
+        mydate=mydate[namett]
+        #组成完整的数据
+        mydate['tag']=resultcl  
+        
+        #释放内存
+        resultcl=0
 ##############################################################################
         #进行分类
         #数据分割
         AllDataPlan=0
         DataTest, DataTrain = train_test_split(mydate, train_size=0.2, random_state=1)
-        
-        XdataTrain = DataTrain.iloc[:,:-1]
+
+        XdataTrain = DataTrain.iloc[:,2:-1]
         TagTrain = DataTrain.iloc[:,-1]
         #释放内存
         DataTrain=0
         
-        XdataTest = DataTest.iloc[:,:-1]
+        XdataTest = DataTest.iloc[:,2:-1]
         TagTest = DataTest.iloc[:,-1]
+        
+        XdataTestOther=DataTest[[u"日期",u"客户编码"]]
+        
         #释放内存
         DataTest=0
         
@@ -316,22 +264,6 @@ if __name__ == "__main__":
         
         print("=============================================")
     
-        # use a full grid over all parameters
-        param_grid = {"max_depth": [3, None],
-                      "max_features": [1, 3, 10],
-                      "min_samples_split": [2, 3, 10],
-                      "min_samples_leaf": [1, 3, 10],
-                      "bootstrap": [True, False],
-                      "criterion": ["gini", "entropy"]}
-#        
-#        # 网格搜索， grid search
-#        grid_search = GridSearchCV(clf, param_grid=param_grid)
-#        start = time()
-#        grid_search.fit(XdataTrain, TagTrain)
-#        
-#        print("GridSearchCV took %.2f seconds for %d candidate parameter settings."
-#              % (time() - start, len(grid_search.cv_results_['params'])))
-#        report(grid_search.cv_results_)
         
         #对比分类效果
         #random_search
@@ -345,17 +277,8 @@ if __name__ == "__main__":
         print('The precision, recall, f1 score are:\n',classification_report(TagTest,Result))
         #all
         print('The precision are:\n',precision_score(TagTest,Result,average='micro'))
-    
-#        #预测结果        
-#        print("============================grid_search=========================================")
-#        Result = grid_search.predict(XdataTest)
-#        print('The accuracy is:',accuracy_score(TagTest,Result))
-#        #混淆矩阵
-#        print('The confusion matrix is:\n',confusion_matrix(TagTest,Result))
-#        # 3 precision, recall, f1 score
-#        print('The precision, recall, f1 score are:\n',classification_report(TagTest,Result))
-#        #all
-#        print('The precision are:\n',precision_score(TagTest,Result,average='micro'))        
+        XdataTestOther[i]=Result
+        XdataTestOther.to_csv("result_pre.csv",encoding='GBK',index=False)
         break
         pass#每种烟结束
    
